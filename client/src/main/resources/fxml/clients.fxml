@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="ru.servicecenter.client.controller.ClientsController"
+      styleClass="content-area" spacing="12" VBox.vgrow="ALWAYS">
+    <VBox spacing="6">
+        <Label text="Клиенты" styleClass="page-title"/>
+        <Label fx:id="pageSubtitleLabel" text="Регистрация и редактирование клиентов сервисного центра" styleClass="page-subtitle" wrapText="true"/>
+        <Label fx:id="messageLabel" styleClass="inline-message" wrapText="true" visible="false" managed="false"/>
+    </VBox>
+    <HBox styleClass="toolbar" spacing="10">
+        <TextField fx:id="searchField" promptText="Поиск по ФИО, телефону, email..." prefWidth="300" HBox.hgrow="NEVER"/>
+        <Button text="Найти" onAction="#onSearch" styleClass="secondary-button"/>
+    </HBox>
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <TableView fx:id="table" HBox.hgrow="ALWAYS" minHeight="300">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="55"/>
+                <TableColumn fx:id="colName" text="ФИО" prefWidth="180"/>
+                <TableColumn fx:id="colPhone" text="Телефон" prefWidth="130"/>
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="180"/>
+                <TableColumn fx:id="colAddress" text="Адрес" prefWidth="200"/>
+            </columns>
+        </TableView>
+        <VBox styleClass="form-card" prefWidth="300" minWidth="280" spacing="8">
+            <Label text="Карточка клиента" styleClass="section-title"/>
+            <Label text="ФИО" styleClass="field-label"/>
+            <TextField fx:id="fullNameField"/>
+            <Label text="Телефон" styleClass="field-label"/>
+            <TextField fx:id="phoneField"/>
+            <Label text="Email" styleClass="field-label"/>
+            <TextField fx:id="emailField"/>
+            <Label text="Адрес" styleClass="field-label"/>
+            <TextField fx:id="addressField"/>
+            <Label text="Примечания" styleClass="field-label"/>
+            <TextArea fx:id="notesField" prefRowCount="3" wrapText="true"/>
+            <HBox spacing="8">
+                <Button fx:id="btnSave" text="Сохранить" onAction="#onSave" styleClass="primary-button" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnNew" text="Новый" onAction="#onAdd" styleClass="secondary-button"/>
+            </HBox>
+            <Button fx:id="btnDelete" text="Удалить" onAction="#onDelete" styleClass="danger-button" maxWidth="Infinity"/>
+        </VBox>
+    </HBox>
+</VBox>

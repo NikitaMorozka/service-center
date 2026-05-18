@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="ru.servicecenter.client.controller.RepairsController"
+      styleClass="content-area" spacing="10" VBox.vgrow="ALWAYS">
+    <VBox spacing="6">
+        <Label text="Заявки на ремонт" styleClass="page-title"/>
+        <Label fx:id="roleHintLabel" styleClass="page-subtitle" wrapText="true"/>
+        <Label fx:id="messageLabel" styleClass="inline-message" wrapText="true" visible="false" managed="false"/>
+    </VBox>
+
+    <HBox styleClass="toolbar" spacing="10">
+        <TextField fx:id="searchField" promptText="Поиск: №, клиент, техника..." prefWidth="280"/>
+        <ComboBox fx:id="statusFilter" promptText="Статус" prefWidth="160"/>
+        <Button text="Обновить" onAction="#onRefresh" styleClass="secondary-button"/>
+        <Button fx:id="btnNew" text="Новая заявка" onAction="#onNew" styleClass="primary-button"/>
+    </HBox>
+
+    <SplitPane fx:id="splitPane" dividerPositions="0.55" VBox.vgrow="ALWAYS">
+        <VBox spacing="8">
+            <Label text="Активные заявки" styleClass="section-title"/>
+            <TableView fx:id="repairTable" VBox.vgrow="ALWAYS" minHeight="200">
+                <columns>
+                    <TableColumn fx:id="colNumber" text="№ заявки" prefWidth="95"/>
+                    <TableColumn fx:id="colClient" text="Клиент" prefWidth="130"/>
+                    <TableColumn fx:id="colDeviceType" text="Тип" prefWidth="90"/>
+                    <TableColumn fx:id="colDeviceBrand" text="Бренд" prefWidth="90"/>
+                    <TableColumn fx:id="colDeviceModel" text="Модель" prefWidth="90"/>
+                    <TableColumn fx:id="colSerial" text="Серийный №" prefWidth="100"/>
+                    <TableColumn fx:id="colProblem" text="Проблема" prefWidth="160"/>
+                    <TableColumn fx:id="colStatus" text="Статус" prefWidth="110"/>
+                    <TableColumn fx:id="colCost" text="Сумма" prefWidth="85"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="form-scroll">
+            <VBox styleClass="form-card" spacing="12">
+                <padding>
+                    <Insets top="4" right="4" bottom="12" left="4"/>
+                </padding>
+
+                <Label fx:id="formTitleLabel" text="Новая заявка" styleClass="section-title"/>
+
+                <VBox fx:id="repairSummarySection" styleClass="repair-summary-card" spacing="8" visible="false" managed="false">
+                    <Label fx:id="summaryTitle" styleClass="section-title"/>
+                    <GridPane hgap="12" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="110" prefWidth="110"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+                        <Label text="Клиент:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Label fx:id="summaryClient" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <Label text="Мастер:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Label fx:id="summaryMaster" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label text="Тип:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label fx:id="summaryType" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Label text="Бренд / модель:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Label fx:id="summaryModel" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <Label text="Проблема:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <Label fx:id="summaryProblem" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        <Label text="Заключение:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <Label fx:id="summaryDiagnosis" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                        <Label text="Статус:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                        <Label fx:id="summaryStatus" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                        <Label text="Сумма:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                        <Label fx:id="summaryCost" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                    </GridPane>
+                </VBox>
+
+                <Separator fx:id="summarySeparator" visible="false" managed="false"/>
+
+                <Label fx:id="editFormLabel" text="Редактирование заявки" styleClass="section-title" visible="false" managed="false"/>
+
+                <VBox fx:id="clientSection" spacing="8">
+                    <Label text="Клиент" styleClass="field-label"/>
+                    <ComboBox fx:id="clientCombo" maxWidth="Infinity"/>
+                </VBox>
+
+                <Separator/>
+                <Label text="Техника" styleClass="section-title"/>
+
+                <VBox fx:id="deviceViewSection" spacing="6" visible="false" managed="false">
+                    <Label text="Данные устройства по заявке" styleClass="field-label"/>
+                    <GridPane hgap="12" vgap="6">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="90" prefWidth="90"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+                        <Label text="Тип:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="field-label"/>
+                        <Label fx:id="viewDeviceType" GridPane.columnIndex="1" GridPane.rowIndex="0" wrapText="true"/>
+                        <Label text="Бренд:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="field-label"/>
+                        <Label fx:id="viewDeviceBrand" GridPane.columnIndex="1" GridPane.rowIndex="1" wrapText="true"/>
+                        <Label text="Модель:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="field-label"/>
+                        <Label fx:id="viewDeviceModel" GridPane.columnIndex="1" GridPane.rowIndex="2" wrapText="true"/>
+                        <Label text="Серийный №:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="field-label"/>
+                        <Label fx:id="viewDeviceSerial" GridPane.columnIndex="1" GridPane.rowIndex="3" wrapText="true"/>
+                    </GridPane>
+                </VBox>
+
+                <VBox fx:id="deviceEditSection" spacing="8">
+                    <CheckBox fx:id="newDeviceCheck" text="Зарегистрировать новую технику для клиента"/>
+                    <Label text="Существующая техника" styleClass="field-label"/>
+                    <ComboBox fx:id="deviceCombo" maxWidth="Infinity"/>
+                    <HBox fx:id="adminAddTypeRow" spacing="8" alignment="CENTER_LEFT" visible="false" managed="false">
+                        <TextField fx:id="adminNewTypeField" promptText="Новый тип устройства" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button text="Добавить тип" onAction="#onAddDeviceType" styleClass="secondary-button" minWidth="110"/>
+                    </HBox>
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+                        <Label text="Тип" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <ComboBox fx:id="deviceTypeCombo" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity"/>
+                        <Label text="Бренд" styleClass="field-label" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <ComboBox fx:id="deviceBrandCombo" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity"/>
+                    </GridPane>
+                    <HBox fx:id="managerAddBrandRow" spacing="8" alignment="CENTER_LEFT" visible="false" managed="false">
+                        <TextField fx:id="inlineBrandField" promptText="Нет в списке — введите новый бренд" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button text="Добавить бренд" onAction="#onAddBrand" styleClass="secondary-button" minWidth="120"/>
+                    </HBox>
+                    <HBox fx:id="adminAddBrandRow" spacing="8" alignment="CENTER_LEFT" visible="false" managed="false">
+                        <TextField fx:id="adminNewBrandField" promptText="Новый бренд" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button text="Добавить бренд" onAction="#onAddBrand" styleClass="secondary-button" minWidth="120"/>
+                    </HBox>
+                    <GridPane hgap="10" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+                        <Label text="Модель" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <TextField fx:id="deviceModelField" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Label text="Серийный №" styleClass="field-label" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <TextField fx:id="deviceSerialField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+
+                <VBox fx:id="masterSection" spacing="6">
+                    <Label text="Мастер (можно назначить сразу при создании)" styleClass="field-label"/>
+                    <ComboBox fx:id="masterCombo" maxWidth="Infinity" promptText="Выберите мастера"/>
+                </VBox>
+
+                <Separator/>
+                <Label text="Ремонт" styleClass="section-title"/>
+                <Label text="Неисправность (со слов клиента)" styleClass="field-label"/>
+                <TextArea fx:id="problemField" prefRowCount="3" wrapText="true"/>
+
+                <Label text="Заключение мастера" styleClass="field-label"/>
+                <Label text="Заполняет мастер после осмотра техники" style="-fx-text-fill: #64748b; -fx-font-size: 12px;" wrapText="true"/>
+                <TextArea fx:id="diagnosisField" prefRowCount="2" wrapText="true" promptText="Например: замена экрана, повреждён шлейф"/>
+
+                <HBox spacing="10">
+                    <VBox fx:id="estimatedCostSection" spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Ориент. стоимость" styleClass="field-label"/>
+                        <TextField fx:id="estimatedCostField" promptText="0.00"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Итоговая стоимость" styleClass="field-label"/>
+                        <TextField fx:id="finalCostField" promptText="0.00"/>
+                    </VBox>
+                </HBox>
+
+                <Label text="Статус" styleClass="field-label"/>
+                <ComboBox fx:id="statusCombo" maxWidth="Infinity"/>
+                <Label text="Комментарий к смене статуса" styleClass="field-label"/>
+                <TextArea fx:id="statusCommentField" prefRowCount="2" wrapText="true"/>
+
+                <Label text="История изменений" styleClass="field-label"/>
+                <TextArea fx:id="historyArea" editable="false" wrapText="true" prefRowCount="4" visible="false" managed="false" styleClass="history-panel"/>
+
+                <HBox spacing="8">
+                    <Button fx:id="btnSave" text="Сохранить" onAction="#onSave" styleClass="primary-button" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <Button fx:id="btnHistory" text="Показать историю" onAction="#onShowHistory" styleClass="secondary-button"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </SplitPane>
+</VBox>

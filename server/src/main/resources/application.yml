@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: service-center-server
+  datasource:
+    url: jdbc:postgresql://localhost:5432/service_center
+    username: sc_user
+    password: sc_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    show-sql: false
+
+server:
+  port: 8080
+  error:
+    include-message: always
+
+app:
+  jwt:
+    secret: "ChangeThisSecretKeyToAtLeast32CharactersLongForProduction!"
+    expiration-ms: 86400000
+
+logging:
+  level:
+    org.springframework.security: INFO
+    ru.servicecenter: DEBUG

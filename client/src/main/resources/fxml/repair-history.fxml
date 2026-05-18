@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="ru.servicecenter.client.controller.RepairHistoryController"
+      styleClass="content-area" spacing="10" VBox.vgrow="ALWAYS">
+    <VBox spacing="6">
+        <Label text="История ремонта" styleClass="page-title"/>
+        <Label fx:id="roleHintLabel" styleClass="page-subtitle" wrapText="true"/>
+        <Label fx:id="messageLabel" styleClass="inline-message" wrapText="true" visible="false" managed="false"/>
+    </VBox>
+
+    <HBox styleClass="toolbar" spacing="10">
+        <TextField fx:id="searchField" promptText="Поиск..." prefWidth="240" HBox.hgrow="NEVER"/>
+        <ComboBox fx:id="statusFilter" promptText="Статус" prefWidth="150"/>
+        <ComboBox fx:id="masterFilter" promptText="Мастер" prefWidth="180"/>
+        <Button text="Обновить" onAction="#onRefresh" styleClass="secondary-button"/>
+        <Button fx:id="btnDelete" text="Удалить из архива" onAction="#onDelete" styleClass="danger-button"/>
+    </HBox>
+
+    <SplitPane dividerPositions="0.58" VBox.vgrow="ALWAYS">
+        <TableView fx:id="archiveTable" minHeight="200">
+            <columns>
+                <TableColumn fx:id="colNumber" text="№" prefWidth="90"/>
+                <TableColumn fx:id="colClient" text="Клиент" prefWidth="120"/>
+                <TableColumn fx:id="colMaster" text="Мастер" prefWidth="120"/>
+                <TableColumn fx:id="colDeviceType" text="Тип" prefWidth="90"/>
+                <TableColumn fx:id="colProblem" text="Проблема" prefWidth="150"/>
+                <TableColumn fx:id="colStatus" text="Статус" prefWidth="100"/>
+                <TableColumn fx:id="colCost" text="Сумма" prefWidth="80"/>
+            </columns>
+        </TableView>
+
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="form-scroll">
+            <VBox styleClass="form-card" spacing="10">
+                <padding>
+                    <Insets top="4" right="4" bottom="12" left="4"/>
+                </padding>
+                <Label fx:id="detailTitle" text="Выберите заявку" styleClass="section-title"/>
+                <GridPane hgap="12" vgap="8">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="100" prefWidth="100"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+                    <Label text="Клиент:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                    <Label fx:id="detailClient" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    <Label text="Мастер:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <Label fx:id="detailMaster" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Label text="Тип:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                    <Label fx:id="detailType" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                    <Label text="Бренд / модель:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                    <Label fx:id="detailModel" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                    <Label text="Проблема:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                    <Label fx:id="detailProblem" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    <Label text="Заключение:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                    <Label fx:id="detailDiagnosis" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                    <Label text="Статус:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                    <Label fx:id="detailStatus" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                    <Label text="Сумма:" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                    <Label fx:id="detailCost" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                </GridPane>
+            </VBox>
+        </ScrollPane>
+    </SplitPane>
+</VBox>

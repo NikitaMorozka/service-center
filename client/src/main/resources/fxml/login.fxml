@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="ru.servicecenter.client.controller.LoginController"
+            styleClass="login-root" prefWidth="480" prefHeight="560">
+    <VBox alignment="CENTER" spacing="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <VBox styleClass="login-card" alignment="CENTER_LEFT" spacing="16" maxWidth="360">
+            <padding>
+                <Insets top="32" right="32" bottom="32" left="32"/>
+            </padding>
+            <Label text="Сервисный центр" styleClass="title-label"/>
+            <Label text="Система учёта ремонта техники" styleClass="subtitle-label"/>
+            <Separator/>
+            <Label text="Логин"/>
+            <TextField fx:id="usernameField" promptText="admin"/>
+            <Label text="Пароль"/>
+            <PasswordField fx:id="passwordField" promptText="••••••••"/>
+            <Label fx:id="errorLabel" styleClass="inline-message inline-message-error" wrapText="true" visible="false" managed="false"/>
+            <Button fx:id="loginButton" text="Войти" onAction="#onLogin" styleClass="primary-button" maxWidth="Infinity"/>
+            <Label text="Демо: admin/admin123, manager/manager123, master/master123"
+                   styleClass="subtitle-label" wrapText="true"/>
+        </VBox>
+    </VBox>
+</AnchorPane>

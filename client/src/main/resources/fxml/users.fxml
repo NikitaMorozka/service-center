@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="ru.servicecenter.client.controller.UsersController"
+      styleClass="content-area" spacing="12" VBox.vgrow="ALWAYS">
+    <VBox spacing="6">
+        <Label text="Пользователи" styleClass="page-title"/>
+        <Label text="Управление учётными записями системы" styleClass="page-subtitle"/>
+        <Label fx:id="messageLabel" styleClass="inline-message" wrapText="true" visible="false" managed="false"/>
+    </VBox>
+    <HBox styleClass="toolbar" spacing="10">
+        <Button text="Обновить" onAction="#onRefresh" styleClass="secondary-button"/>
+    </HBox>
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <TableView fx:id="table" HBox.hgrow="ALWAYS" minHeight="300">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="55"/>
+                <TableColumn fx:id="colLogin" text="Логин" prefWidth="120"/>
+                <TableColumn fx:id="colName" text="ФИО" prefWidth="170"/>
+                <TableColumn fx:id="colEmail" text="Email" prefWidth="180"/>
+                <TableColumn fx:id="colRole" text="Роль" prefWidth="100"/>
+                <TableColumn fx:id="colActive" text="Активен" prefWidth="80"/>
+            </columns>
+        </TableView>
+        <VBox styleClass="form-card" prefWidth="300" minWidth="280" spacing="8">
+            <Label text="Учётная запись" styleClass="section-title"/>
+            <Label text="Логин" styleClass="field-label"/>
+            <TextField fx:id="usernameField"/>
+            <Label text="Пароль" styleClass="field-label"/>
+            <PasswordField fx:id="passwordField" promptText="Пусто — не менять"/>
+            <Label text="ФИО" styleClass="field-label"/>
+            <TextField fx:id="fullNameField"/>
+            <Label text="Email" styleClass="field-label"/>
+            <TextField fx:id="emailField"/>
+            <Label text="Роль" styleClass="field-label"/>
+            <ComboBox fx:id="roleCombo" maxWidth="Infinity"/>
+            <CheckBox fx:id="activeCheck" text="Активен" selected="true"/>
+            <HBox spacing="8">
+                <Button text="Сохранить" onAction="#onSave" styleClass="primary-button" HBox.hgrow="ALWAYS"/>
+                <Button text="Новый" onAction="#onAdd" styleClass="secondary-button"/>
+            </HBox>
+            <Button text="Удалить" onAction="#onDelete" styleClass="danger-button" maxWidth="Infinity"/>
+        </VBox>
+    </HBox>
+</VBox>
