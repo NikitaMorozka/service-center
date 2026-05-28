@@ -52,18 +52,7 @@ service-center/
 ./gradlew :server:test
 ```
 
-Профиль **`test`**, БД **H2** (режим PostgreSQL).
-
-| Категория | Классы |
-|-----------|--------|
-| Сервисы (unit) | `RepairServiceTest`, `ClientServiceTest`, `DeviceServiceTest`, `UserServiceTest`, `BrandCatalogServiceTest`, `DeviceTypeCatalogServiceTest` |
-| Безопасность | `JwtServiceTest` |
-| Репозитории (JPA) | `RepairRequestRepositoryTest`, `ClientRepositoryTest`, `BrandRepositoryTest`, `DeviceRepositoryTest`, `DeviceTypeRepositoryTest`, `UserRepositoryTest`, `ServiceHistoryRepositoryTest` |
-| API (integration) | `RepairApiIntegrationTest`, `AuthApiIntegrationTest`, `CatalogApiIntegrationTest` |
-
-Покрываются: номер заявки, архив, поиск, история статусов, справочники, JWT, права ADMIN/MANAGER/MASTER, логин и валидация.
-
-## Быстрый старт (рекомендуемый для курсовой)
+## Быстрый старт
 
 Целевая схема запуска:
 - **Docker**: PostgreSQL + Spring Boot backend
