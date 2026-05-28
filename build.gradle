@@ -32,3 +32,35 @@ subprojects {
         useJUnitPlatform()
     }
 }
+
+tasks.register('prepareDistribution', Sync) {
+    group = 'distribution'
+    description = 'Builds portable distributive in build/distribution.'
+    dependsOn(':server:bootJar', ':client:installDist')
+
+    into(layout.buildDirectory.dir('distribution'))
+
+    from('deploy/README-DISK.md')
+    from('deploy/start-server.sh') {
+        fileMode = 0755
+    }
+    from('deploy/start-client.sh') {
+        fileMode = 0755
+    }
+    from('deploy/start-db.sh') {
+        fileMode = 0755
+    }
+    from('deploy/stop-db.sh') {
+        fileMode = 0755
+    }
+    from('deploy/docker-compose.db.yml')
+    from('database/docker-init.sql')
+
+    from('server/build/libs/service-center-server.jar') {
+        into('server')
+    }
+
+    from('client/build/install/client') {
+        into('client')
+    }
+}

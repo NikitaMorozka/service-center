@@ -8,16 +8,17 @@
 service-center/
 ├── build.gradle              # Корневой Gradle
 ├── settings.gradle
-├── docker-compose.yml        # PostgreSQL 15
+├── docker-compose.yml        # PostgreSQL + backend (Docker)
 ├── database/
-│   ├── docker-init.sql       # Схема для Docker (автозапуск)
-│   └── init.sql              # Полная ручная установка БД
+│   ├── docker-init.sql       # legacy-скрипт (оставлен для справки)
+│   └── init.sql              # Полная ручная установка БД (legacy)
 ├── docs/
 │   ├── ER-DIAGRAM.md         # ER-диаграмма (Mermaid)
 │   └── API.md                # REST endpoints
 ├── server/                   # Spring Boot backend
 │   ├── build.gradle
-│   └── src/main/java/ru/servicecenter/server/
+│   └── src/main/
+│       ├── java/ru/servicecenter/server/
 │       ├── config/           # Security, DataInitializer
 │       ├── controller/       # REST API
 │       ├── domain/entity/    # JPA сущности
@@ -25,7 +26,8 @@ service-center/
 │       ├── mapper/           # MapStruct
 │       ├── repository/       # JPA Repository
 │       ├── security/         # JWT
-│       └── service/          # Бизнес-логика
+│       ├── service/          # Бизнес-логика и bootstrap-сервисы
+│       └── resources/db/changelog/ # Liquibase миграции
 └── client/                   # JavaFX desktop
     ├── build.gradle
     └── src/main/
@@ -39,60 +41,101 @@ service-center/
 
 | Слой | Стек |
 |------|------|
-| Backend | Java 21, Spring Boot 3.3, Spring Security, JWT, JPA/Hibernate, Lombok, MapStruct |
+| Backend | Java 21, Spring Boot 3.3, Spring Security, JWT, JPA/Hibernate, Liquibase, Lombok, MapStruct |
 | Frontend | Java 21, JavaFX 21, FXML, REST (HttpClient + Jackson) |
 | БД | PostgreSQL 15 |
 | Сборка | Gradle 8.10 |
 
-## Быстрый старт
-
-### 1. PostgreSQL (Docker)
+## Тесты (backend)
 
 ```bash
-docker compose up -d
+./gradlew :server:test
 ```
 
-Проверка, что БД готова:
+Профиль **`test`**, БД **H2** (режим PostgreSQL).
+
+| Категория | Классы |
+|-----------|--------|
+| Сервисы (unit) | `RepairServiceTest`, `ClientServiceTest`, `DeviceServiceTest`, `UserServiceTest`, `BrandCatalogServiceTest`, `DeviceTypeCatalogServiceTest` |
+| Безопасность | `JwtServiceTest` |
+| Репозитории (JPA) | `RepairRequestRepositoryTest`, `ClientRepositoryTest`, `BrandRepositoryTest`, `DeviceRepositoryTest`, `DeviceTypeRepositoryTest`, `UserRepositoryTest`, `ServiceHistoryRepositoryTest` |
+| API (integration) | `RepairApiIntegrationTest`, `AuthApiIntegrationTest`, `CatalogApiIntegrationTest` |
+
+Покрываются: номер заявки, архив, поиск, история статусов, справочники, JWT, права ADMIN/MANAGER/MASTER, логин и валидация.
+
+## Быстрый старт (рекомендуемый для курсовой)
+
+Целевая схема запуска:
+- **Docker**: PostgreSQL + Spring Boot backend
+- **Локально на ПК**: JavaFX desktop-клиент
+
+### 1. Запуск backend + PostgreSQL через Docker
+
+```bash
+docker compose up -d --build
+```
+
+Проверка состояния контейнеров:
 
 ```bash
 docker compose ps
+docker compose logs server
 docker compose logs postgres
 ```
 
-Параметры контейнера (должны совпадать с `application.yml`):
+Backend после старта доступен на: http://localhost:8080
 
-| Параметр | Значение |
-|----------|----------|
-| База | `service_center` |
-| Пользователь | `sc_user` |
-| Пароль | `sc_password` |
-| Порт | `5432` |
+Чтобы остановить:
 
-При **первом** запуске выполняется `database/docker-init.sql` (таблицы, роли, справочники типов и брендов).  
-Пользователи и демо-данные создаёт Spring Boot при старте сервера.
+```bash
+docker compose down
+```
 
-Пересоздать БД с нуля (сброс демо-данных):
+Чтобы полностью пересоздать БД с нуля:
 
 ```bash
 docker compose down -v
-docker compose up -d
+docker compose up -d --build
 ```
 
-Ручная установка без Docker: `psql -U postgres -f database/init.sql`
+Схема и базовые справочники поднимаются Liquibase-миграциями при старте backend.
+Дефолтные пользователи и демо-данные создаются Spring Boot при старте backend.
 
-### 2. Backend
-
-```bash
-./gradlew :server:bootRun
-```
-
-Сервер: http://localhost:8080
-
-### 3. Desktop-клиент
+### 2. Запуск desktop-клиента локально
 
 ```bash
 ./gradlew :client:run
 ```
+
+По умолчанию клиент подключается к `http://localhost:8080`.
+
+Если backend запущен на другом хосте/порту, укажите URL через JVM-параметр:
+
+```bash
+./gradlew :client:run -Dsc.api.base-url=http://HOST:8080
+```
+
+### 3. Альтернатива без Docker (при необходимости)
+
+- Поднять PostgreSQL вручную (без применения SQL-схемы вручную)
+- Запустить backend локально: `./gradlew :server:bootRun`
+- Запустить клиент: `./gradlew :client:run`
+
+## Дистрибутив для записи на диск/флешку
+
+Чтобы не переносить весь проект, соберите переносимый комплект:
+
+```bash
+./gradlew prepareDistribution
+```
+
+Готовая папка: `build/distribution`
+
+В ней уже есть:
+- `server/service-center-server.jar`
+- `client/` (скрипт запуска + зависимости клиента)
+- `docker-compose.db.yml` и `docker-init.sql` для PostgreSQL
+- `README-DISK.md`, `start-server.sh`, `start-client.sh`
 
 ## Учётные записи по умолчанию
 
@@ -124,6 +167,14 @@ docker compose up -d
 
 ## Конфигурация
 
-`server/src/main/resources/application.yml` — подключение к PostgreSQL, JWT secret, порт сервера.
+`server/src/main/resources/application.yml` — подключение к PostgreSQL, Liquibase changelog, JWT secret, порт сервера.
 
 Клиент: `client/.../AppConfig.java` — URL API (`http://localhost:8080`).
+
+## Best practices: Liquibase + SOLID
+
+- Все изменения БД вносите только через `server/src/main/resources/db/changelog/`.
+- Каждому изменению — отдельный changeset с уникальным `id`, `author` и `rollback`.
+- Для существующих сред используйте preconditions (`onFail: MARK_RAN`) в baseline-миграциях.
+- Для seed-данных используйте идемпотентные SQL (`ON CONFLICT DO NOTHING`), а не дублирующую Java-инициализацию.
+- Бизнес-инициализацию (дефолтные пользователи, демо-данные) держите в сервисах, а `CommandLineRunner` оставляйте тонким оркестратором (SRP, DIP).

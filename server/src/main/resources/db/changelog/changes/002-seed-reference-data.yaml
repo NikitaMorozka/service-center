@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-seed-roles
+      author: cursor
+      context: seed,dev,prod
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO roles (name) VALUES ('ADMIN'), ('MANAGER'), ('MASTER')
+              ON CONFLICT (name) DO NOTHING;
+      rollback:
+        - delete:
+            tableName: roles
+            where: name IN ('ADMIN', 'MANAGER', 'MASTER')
+
+  - changeSet:
+      id: 010-seed-device-types
+      author: cursor
+      context: seed,dev,prod
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO device_types (name) VALUES
+                  ('Телефон'),
+                  ('Телевизор'),
+                  ('Стиральная машина'),
+                  ('Ноутбук'),
+                  ('Планшет'),
+                  ('Холодильник')
+              ON CONFLICT (name) DO NOTHING;
+      rollback:
+        - delete:
+            tableName: device_types
+            where: name IN ('Телефон', 'Телевизор', 'Стиральная машина', 'Ноутбук', 'Планшет', 'Холодильник')
+
+  - changeSet:
+      id: 011-seed-brands
+      author: cursor
+      context: seed,dev,prod
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO brands (name) VALUES
+                  ('Samsung'),
+                  ('LG'),
+                  ('Realme'),
+                  ('Apple'),
+                  ('Xiaomi'),
+                  ('Sony'),
+                  ('Bosch'),
+                  ('Philips')
+              ON CONFLICT (name) DO NOTHING;
+      rollback:
+        - delete:
+            tableName: brands
+            where: name IN ('Samsung', 'LG', 'Realme', 'Apple', 'Xiaomi', 'Sony', 'Bosch', 'Philips')

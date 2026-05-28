@@ -3,6 +3,7 @@ package ru.servicecenter.server.config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.util.List;
 @Slf4j
 @Component
 @Order(2)
+@ConditionalOnProperty(name = "app.demo.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class DemoDataSeeder implements CommandLineRunner {
 
@@ -49,8 +51,10 @@ public class DemoDataSeeder implements CommandLineRunner {
     }
 
     private void seedStaff() {
-        Role managerRole = roleRepository.findByName(RoleName.MANAGER).orElseThrow();
-        Role masterRole = roleRepository.findByName(RoleName.MASTER).orElseThrow();
+        Role managerRole = roleRepository.findByName(RoleName.MANAGER)
+                .orElseThrow(() -> new IllegalStateException("Роль MANAGER не найдена. Проверьте Liquibase-миграции."));
+        Role masterRole = roleRepository.findByName(RoleName.MASTER)
+                .orElseThrow(() -> new IllegalStateException("Роль MASTER не найдена. Проверьте Liquibase-миграции."));
 
         createUserIfAbsent("manager2", "manager123", "Анна Менеджерова", "manager2@servicecenter.local", managerRole);
 

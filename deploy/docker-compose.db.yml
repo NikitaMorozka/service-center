@@ -11,28 +11,13 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./docker-init.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U sc_user -d service_center"]
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 10s
-
-  server:
-    build:
-      context: .
-      dockerfile: server/Dockerfile
-    container_name: service-center-server
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/service_center
-      SPRING_DATASOURCE_USERNAME: sc_user
-      SPRING_DATASOURCE_PASSWORD: sc_password
-    ports:
-      - "8080:8080"
 
 volumes:
   pgdata:

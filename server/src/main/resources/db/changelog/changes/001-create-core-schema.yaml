@@ -1,0 +1,471 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-roles
+      author: cursor
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        not:
+          tableExists:
+            tableName: roles
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+      rollback:
+        - dropTable:
+            tableName: roles
+
+  - changeSet:
+      id: 002-create-users
+      author: cursor
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        not:
+          tableExists:
+            tableName: users
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password_hash
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(200)
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+            constraintName: fk_users_role
+        - createIndex:
+            tableName: users
+            indexName: idx_users_role
+            columns:
+              - column:
+                  name: role_id
+      rollback:
+        - dropTable:
+            tableName: users
+
+  - changeSet:
+      id: 003-create-device-types
+      author: cursor
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        not:
+          tableExists:
+            tableName: device_types
+      changes:
+        - createTable:
+            tableName: device_types
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+      rollback:
+        - dropTable:
+            tableName: device_types
+
+  - changeSet:
+      id: 004-create-brands
+      author: cursor
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        not:
+          tableExists:
+            tableName: brands
+      changes:
+        - createTable:
+            tableName: brands
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+      rollback:
+        - dropTable:
+            tableName: brands
+
+  - changeSet:
+      id: 005-create-clients
+      author: cursor
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        not:
+          tableExists:
+            tableName: clients
+      changes:
+        - createTable:
+            tableName: clients
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(200)
+              - column:
+                  name: address
+                  type: VARCHAR(500)
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: clients
+
+  - changeSet:
+      id: 006-create-devices
+      author: cursor
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        not:
+          tableExists:
+            tableName: devices
+      changes:
+        - createTable:
+            tableName: devices
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: brand
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: model
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: serial_number
+                  type: VARCHAR(100)
+              - column:
+                  name: device_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: devices
+            baseColumnNames: client_id
+            referencedTableName: clients
+            referencedColumnNames: id
+            constraintName: fk_devices_client
+            onDelete: CASCADE
+        - createIndex:
+            tableName: devices
+            indexName: idx_devices_client
+            columns:
+              - column:
+                  name: client_id
+      rollback:
+        - dropTable:
+            tableName: devices
+
+  - changeSet:
+      id: 007-create-repair-requests
+      author: cursor
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        not:
+          tableExists:
+            tableName: repair_requests
+      changes:
+        - createTable:
+            tableName: repair_requests
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: request_number
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: client_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: device_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: master_id
+                  type: BIGINT
+              - column:
+                  name: status
+                  type: VARCHAR(30)
+                  defaultValue: NEW
+                  constraints:
+                    nullable: false
+              - column:
+                  name: problem_description
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: diagnosis
+                  type: TEXT
+              - column:
+                  name: estimated_cost
+                  type: NUMERIC(12,2)
+              - column:
+                  name: final_cost
+                  type: NUMERIC(12,2)
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: completed_at
+                  type: TIMESTAMPTZ
+        - addForeignKeyConstraint:
+            baseTableName: repair_requests
+            baseColumnNames: client_id
+            referencedTableName: clients
+            referencedColumnNames: id
+            constraintName: fk_repair_requests_client
+        - addForeignKeyConstraint:
+            baseTableName: repair_requests
+            baseColumnNames: device_id
+            referencedTableName: devices
+            referencedColumnNames: id
+            constraintName: fk_repair_requests_device
+        - addForeignKeyConstraint:
+            baseTableName: repair_requests
+            baseColumnNames: master_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_repair_requests_master
+        - addCheckConstraint:
+            tableName: repair_requests
+            constraintName: chk_repair_status
+            validate: true
+            checkConstraint: status IN ('NEW', 'IN_PROGRESS', 'WAITING_PARTS', 'COMPLETED', 'CANCELED')
+        - createIndex:
+            tableName: repair_requests
+            indexName: idx_repair_client
+            columns:
+              - column:
+                  name: client_id
+        - createIndex:
+            tableName: repair_requests
+            indexName: idx_repair_device
+            columns:
+              - column:
+                  name: device_id
+        - createIndex:
+            tableName: repair_requests
+            indexName: idx_repair_master
+            columns:
+              - column:
+                  name: master_id
+        - createIndex:
+            tableName: repair_requests
+            indexName: idx_repair_status
+            columns:
+              - column:
+                  name: status
+      rollback:
+        - dropTable:
+            tableName: repair_requests
+
+  - changeSet:
+      id: 008-create-service-history
+      author: cursor
+      preConditions:
+        onFail: MARK_RAN
+        onError: HALT
+        not:
+          tableExists:
+            tableName: service_history
+      changes:
+        - createTable:
+            tableName: service_history
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: repair_request_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: changed_by_id
+                  type: BIGINT
+              - column:
+                  name: old_status
+                  type: VARCHAR(30)
+              - column:
+                  name: new_status
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment
+                  type: TEXT
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: service_history
+            baseColumnNames: repair_request_id
+            referencedTableName: repair_requests
+            referencedColumnNames: id
+            constraintName: fk_service_history_repair_request
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: service_history
+            baseColumnNames: changed_by_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_service_history_changed_by
+        - createIndex:
+            tableName: service_history
+            indexName: idx_history_request
+            columns:
+              - column:
+                  name: repair_request_id
+      rollback:
+        - dropTable:
+            tableName: service_history
